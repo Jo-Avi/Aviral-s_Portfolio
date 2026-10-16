@@ -141,17 +141,30 @@ nav a:hover,nav a.active{color:var(--main)}
 
 /* ============ 8. PROJECTS ============ */
 .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px;max-width:1100px;margin:0 auto}
-.card{border:1px solid var(--main);border-radius:10px;overflow:hidden;background:rgba(0,171,240,.04);transition:transform .3s,box-shadow .3s}
-.card:hover{transform:translateY(-6px);box-shadow:0 8px 24px rgba(0,171,240,.25)}
+.card{border:1px solid var(--main);border-radius:10px;overflow:hidden;background:rgba(0,171,240,.04)}
+/* bouncy card hover */
+.projects-grid .card{
+  transition:opacity .9s ease var(--d,0s),
+             transform .9s ease var(--d,0s),
+             translate .55s cubic-bezier(.34,1.56,.64,1),
+             scale .55s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .3s ease;
+}
+.projects-grid .card:hover{translate:0 -12px;scale:1.03;box-shadow:0 14px 32px rgba(0,171,240,.3)}
+
+/* bouncy tags */
+.tags span{cursor:default;transition:transform .45s cubic-bezier(.34,1.56,.64,1),background .25s,color .25s,box-shadow .25s}
+.tags span:hover{transform:translateY(-4px) scale(1.12);background:var(--main);color:var(--bg);box-shadow:0 5px 14px rgba(0,171,240,.45)}
 .card .thumb{height:170px;background:linear-gradient(135deg,var(--bg-2),var(--main));background-size:cover;background-position:center}
 .card .body{padding:20px}
 .card h4{font-size:1.15rem;margin-bottom:8px}
 .card p{font-size:.9rem;color:var(--muted);line-height:1.6;margin-bottom:14px}
 .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .tags span{font-size:.75rem;padding:3px 10px;border:1px solid var(--main);border-radius:20px;color:var(--main)}
-.card .links{display:flex;gap:16px;font-size:.9rem}
-.card .links a{color:var(--main);font-weight:500}
-.card .links a:hover{text-decoration:underline}
+/* demo + source buttons, styled like the tags */
+.card .links{display:flex;flex-wrap:wrap;gap:10px}
+.card .links a{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:500;padding:5px 15px;border:1px solid var(--main);border-radius:20px;color:var(--main);transition:transform .45s cubic-bezier(.34,1.56,.64,1),background .25s,color .25s,box-shadow .25s}
+.card .links a:hover{transform:translateY(-4px) scale(1.1);background:var(--main);color:var(--bg);box-shadow:0 5px 14px rgba(0,171,240,.45)}
 
 /* ============ 9. CONTACT ============ */
 #contact{background:#061522}
@@ -202,6 +215,9 @@ footer a:hover{box-shadow:0 0 12px var(--main);transform:translateY(-3px)}
   .timeline .t-item{transition:none}
   .t-item::before{transform:none;transition:none}
   .t-item:hover .place i{animation:none}
+  .projects-grid .card:hover{translate:none;scale:none}
+  .tags span:hover{transform:none}
+  .card .links a:hover{transform:none}
 }
 
 @media(max-width:900px){
