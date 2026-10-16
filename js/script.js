@@ -31,13 +31,31 @@ const reveal = new IntersectionObserver(entries => {
 }, { threshold: [0, 0.15] });
 document.querySelectorAll('.reveal').forEach(el => reveal.observe(el));
 
-/* ---- Contact form: opens the visitor's email app (swap for Formspree/EmailJS later) ---- */
-document.getElementById('contact-form').addEventListener('submit', e => {
+/* ---- Contact form: sends the message through Formspree ---- */
+const contactForm = document.getElementById('contact-form');
+const contactMsg = document.getElementById('form-msg');
+const contactBtn = contactForm.querySelector('button[type="submit"]');
+
+contactForm.addEventListener('submit', async e => {
   e.preventDefault();
-  const f = new FormData(e.target);
-  const body = `Name: ${f.get('name')}\nEmail: ${f.get('email')}\nPhone: ${f.get('phone')}\n\n${f.get('message')}`;
-  location.href = `mailto:you@example.com?subject=${encodeURIComponent(f.get('subject'))}&body=${encodeURIComponent(body)}`;
-  document.getElementById('form-msg').textContent = 'Opening your email app...';
+  if (contactForm.elements._gotcha.value) return;        // a bot filled the hidden field: ignore it
+  contactBtn.disabled = true;
+  contactMsg.style.color = '';
+  contactMsg.textContent = 'Sending...';
+  try {
+    const res = await fetch(contactForm.action, {
+      method: 'POST',
+      body: new FormData(contactForm),
+      headers: { Accept: 'application/json' }
+    });
+    if (!res.ok) throw new Error('failed');
+    contactForm.reset();
+    contactMsg.textContent = "Thanks! Your message was sent. I'll get back to you soon.";
+  } catch {
+    contactMsg.style.color = '#ff6b6b';
+    contactMsg.textContent = 'Something went wrong. Please try again in a moment.';
+  }
+  contactBtn.disabled = false;
 });
 
 document.getElementById('year').textContent = new Date().getFullYear();
