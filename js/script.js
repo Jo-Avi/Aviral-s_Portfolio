@@ -16,16 +16,19 @@ const spy = new IntersectionObserver(entries => {
 }, { rootMargin: '-45% 0px -50% 0px' });
 document.querySelectorAll('section[id]').forEach(s => spy.observe(s));
 
-/* ---- Scroll reveal for text/cards + animated skill bars ---- */
-const reveal = new IntersectionObserver((entries, obs) => {
+/* ---- Scroll reveal: plays every time an element enters the screen ---- */
+const reveal = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (!e.isIntersecting) return;
-    e.target.classList.add('show');
     const fill = e.target.querySelector('.bar i');
-    if (fill) fill.style.width = fill.dataset.w + '%';
-    obs.unobserve(e.target);
+    if (e.intersectionRatio >= 0.15) {                 // coming into view: play the animation
+      e.target.classList.add('show');
+      if (fill) fill.style.width = fill.dataset.w + '%';
+    } else if (e.intersectionRatio === 0) {            // fully out of view: reset so it can play again
+      e.target.classList.remove('show');
+      if (fill) fill.style.width = '0';
+    }
   });
-}, { threshold: 0.15 });
+}, { threshold: [0, 0.15] });
 document.querySelectorAll('.reveal').forEach(el => reveal.observe(el));
 
 /* ---- Contact form: opens the visitor's email app (swap for Formspree/EmailJS later) ---- */
@@ -136,32 +139,39 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-/* ---- Hero role: cursor sweeps over the text, goes back, then switches to the next role ---- */
+/* ---- Changing role: cursor sweeps over the text, goes back, then switches to the next role ---- */
 const roles = ['Full-Stack Developer', 'Data Analyst', 'Machine Learning Enthusiast'];   // edit these
-const roleText = document.getElementById('role-text');
-const roleFill = document.getElementById('role-fill');
 
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+function runRole(textId, fillId, list) {
+  const roleText = document.getElementById(textId);
+  const roleFill = document.getElementById(fillId);
+  if (!roleText || !roleFill) return;
+
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const sweep = async (from, to, ms) => {
     await roleFill.animate({ width: [from + 'px', to + 'px'] }, { duration: ms, easing: 'linear' }).finished;
     roleFill.style.width = to + 'px';
   };
 
-  (async function cycleRoles() {
-    if (document.fonts) await document.fonts.ready;      // wait for Poppins so the width is measured correctly
+  (async function cycle() {
+    if (document.fonts) await document.fonts.ready;
     let i = 0;
     while (true) {
-      const word = roles[i++ % roles.length];
+      const word = list[i++ % list.length];
       roleText.textContent = word;
       roleFill.textContent = word;
       roleFill.style.width = '0px';
-      const w = roleText.offsetWidth;                    // measured every time, so any word length works
-      await wait(600);                                   // cursor waits at the start
-      await sweep(0, w, word.length * 90 + 300);         // cursor sweeps right, filling the text
-      await wait(1400);                                  // hold the full word
-      await sweep(w, 0, word.length * 60 + 250);         // cursor goes back, un-filling the text
+      const w = roleText.offsetWidth;
+      await wait(600);
+      await sweep(0, w, word.length * 90 + 300);
+      await wait(1400);
+      await sweep(w, 0, word.length * 60 + 250);
       await wait(300);
     }
   })();
+}
+
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  runRole('role-text', 'role-fill', roles);                  // hero
+  runRole('about-role-text', 'about-role-fill', roles);      // about section
 }

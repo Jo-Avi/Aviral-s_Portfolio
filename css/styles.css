@@ -60,23 +60,65 @@ nav a:hover,nav a.active{color:var(--main)}
 .socials a:hover::before{transform:scale(1)}
 
 /* ============ 5. ABOUT ============ */
-#about{background:var(--bg-2);text-align:center}
-.avatar{position:relative;width:200px;height:200px;margin:0 auto 24px}
+#about{position:relative;overflow:hidden;background:var(--bg-2)}
+/* soft corner glows */
+#about::before,#about::after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+#about::before{width:460px;height:460px;top:-160px;left:-160px;background:radial-gradient(circle,rgba(0,171,240,.16),transparent 70%)}
+#about::after{width:520px;height:520px;bottom:-200px;right:-180px;background:radial-gradient(circle,rgba(0,171,240,.12),transparent 70%)}
+#about .heading,.about-grid{position:relative;z-index:1}
+.avatar{position:relative;width:min(300px,70vw);aspect-ratio:1}
 .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:5px solid var(--bg-2);background:var(--bg)}
 .avatar::after{content:"";position:absolute;inset:-10px;border:2px solid transparent;border-top-color:var(--main);border-bottom-color:var(--main);border-radius:50%;animation:spin 6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-#about h3{font-size:1.5rem;margin-bottom:14px}
-#about p{max-width:820px;margin:0 auto 26px;color:var(--muted);line-height:1.8}
+.about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:70px;align-items:center;max-width:1000px;margin:0 auto}
+.about-text{text-align:left}
+.about-text h3{font-size:1.8rem;margin-bottom:14px}
+.about-text p{color:var(--muted);line-height:1.8;margin-bottom:26px}
+
+/* photo glow + dotted pattern behind it */
+.about-photo{position:relative;isolation:isolate;justify-self:center}
+.about-photo::before{content:"";position:absolute;inset:-22%;border-radius:50%;background:radial-gradient(circle,rgba(0,171,240,.35),transparent 68%);z-index:-1;animation:glowPulse 5s ease-in-out infinite}
+.about-photo::after{content:"";position:absolute;right:-28px;bottom:-28px;width:140px;height:140px;background-image:radial-gradient(var(--main) 1.5px,transparent 1.5px);background-size:16px 16px;opacity:.4;z-index:-1}
+@keyframes glowPulse{50%{transform:scale(1.1);opacity:.65}}
 
 /* ============ 6. JOURNEY (timeline) ============ */
 .journey-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;max-width:1000px;margin:0 auto}
 .journey-grid h3{font-size:1.3rem;margin-bottom:22px}
-.timeline{border-left:2px solid var(--main);padding-left:26px}
-.t-item{position:relative;border:1px solid var(--main);border-radius:6px;padding:16px 18px;margin-bottom:24px;background:rgba(0,171,240,.04)}
-.t-item::before{content:"";position:absolute;left:-35px;top:22px;width:14px;height:14px;background:var(--main);border-radius:50%;box-shadow:0 0 10px var(--main)}
-.t-item small{color:var(--main);font-weight:500}
-.t-item h4{margin:6px 0}
-.t-item p{font-size:.9rem;color:var(--muted);line-height:1.6}
+/* timeline line draws down when the cards appear */
+.timeline{position:relative;padding-left:26px}
+.timeline::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--main);transform:scaleY(0);transform-origin:top;transition:transform 1.4s ease}
+.timeline:has(.t-item.show)::before{transform:scaleY(1)}
+@supports not selector(:has(*)){.timeline::before{transform:none}}
+
+/* card: hover fill sweeps in from the left and leaves to the right */
+.t-item{position:relative;border:1px solid var(--main);border-radius:6px;padding:22px 24px;margin-bottom:28px;box-shadow:0 6px 20px rgba(0,0,0,.25);
+  background-color:rgba(0,171,240,.04);
+  background-image:linear-gradient(rgba(0,171,240,.16),rgba(0,171,240,.16));
+  background-repeat:no-repeat;background-size:0 100%;background-position:right center}
+.timeline .t-item{transition:opacity .9s ease,transform .9s ease,background-size .5s ease;transition-delay:var(--d,0s),var(--d,0s),0s}
+.timeline .t-item:hover{background-size:100% 100%;background-position:left center}
+
+/* dot pops in, and glows on hover */
+.t-item::before{content:"";position:absolute;left:-33px;top:29px;width:14px;height:14px;background:var(--main);border-radius:50%;box-shadow:0 0 10px var(--main);transform:scale(0);transition:transform .5s cubic-bezier(.3,1.6,.5,1) .3s,box-shadow .3s}
+.t-item.show::before{transform:scale(1)}
+.t-item:hover::before{box-shadow:0 0 0 6px rgba(0,171,240,.25),0 0 16px var(--main)}
+/* date as a badge */
+.t-item small{display:inline-flex;align-items:center;gap:7px;padding:4px 12px;border-radius:20px;background:rgba(0,171,240,.12);color:var(--main);font-size:.8rem;font-weight:500;margin-bottom:14px}
+
+/* title */
+.t-item h4{font-size:1.1rem;line-height:1.45;margin:0 0 12px}
+
+/* college + city side by side (they wrap to two lines on narrow cards) */
+.t-item .place{display:inline-flex;align-items:center;gap:8px;margin:0 20px 8px 0;font-size:.88rem;color:var(--muted)}
+.t-item .place i{color:var(--main);font-size:.85rem}
+
+/* description, separated by a divider */
+.t-item p{margin-top:14px;padding-top:14px;border-top:1px dashed rgba(0,171,240,.3);font-size:.9rem;color:var(--muted);line-height:1.75}
+
+/* kept from before */
+.t-item br{display:none}
+.t-item:hover .place i{animation:pinHop .6s ease}
+@keyframes pinHop{40%{transform:translateY(-5px)}}
 
 /* ============ 7. SKILLS (progress bars) ============ */
 #skills{background:var(--bg-2);padding-bottom:20px}
@@ -156,4 +198,17 @@ footer a:hover{box-shadow:0 0 12px var(--main);transform:translateY(-3px)}
   .marquee{-webkit-mask-image:none;mask-image:none}
   .marquee-track{animation:none;width:auto;flex-wrap:wrap;justify-content:center;row-gap:24px}
   .tech[aria-hidden="true"]{display:none}
+  .timeline::before{transform:none;transition:none}
+  .timeline .t-item{transition:none}
+  .t-item::before{transform:none;transition:none}
+  .t-item:hover .place i{animation:none}
 }
+
+@media(max-width:900px){
+  .about-grid{grid-template-columns:1fr;gap:44px}
+  .about-text{text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .about-photo::before{animation:none}
+}
+@media(max-width:560px){.t-item{padding:18px}}
