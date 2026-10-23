@@ -8,6 +8,10 @@ Welcome to my personal portfolio! This website showcases my technical skills, pr
 
 This portfolio website serves as a central place to explore my technical expertise, featured projects, and professional journey. It features a clean, responsive design that provides an accessible browsing experience across different devices.
 
+## 📸 Screenshot
+
+![Portfolio Hero Section](screenshots/hero-section.png)
+
 ## ✨ Features
 
 * **About Me:** Introduction and professional background.
