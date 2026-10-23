@@ -39,7 +39,7 @@ Follow these steps to run the project locally.
 1. Clone the repository:
 
    ```bash
-   git clone <your-github-repository-url>
+   git clone <[your-github-repository-url](https://github.com/Jo-Avi/Aviral-s_Portfolio.git)>
    ```
 
 2. Navigate to the project directory:
