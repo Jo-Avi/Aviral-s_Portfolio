@@ -10,7 +10,7 @@ This portfolio website serves as a central place to explore my technical experti
 
 ## 📸 Screenshot
 
-![Portfolio Hero Section](screenshots/hero-section.png)
+![Portfolio Hero Section](screenshots/screenshot.png)
 
 ## ✨ Features
 
